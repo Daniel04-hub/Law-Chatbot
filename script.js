@@ -180,6 +180,63 @@ function processUserMessage(message) {
   const lowerMessage = message.toLowerCase();
   let matchFound = false;
 
+  // Accident/traffic collision flow (NyayGuru)
+  const accidentKeywords = [
+    "accident", "crash", "collision", "collided", "hit a car", "hit car", "hit someone",
+    "ran into", "bike accident", "car accident", "scooter accident", "road accident",
+    "knocked", "bumped", "fender bender", "hit and run", "run away", "drove away"
+  ];
+  if (accidentKeywords.some(k => lowerMessage.includes(k))) {
+    matchFound = true;
+
+    const nyayGuruMessage = `
+      <strong>As NyayGuru, I can help — please answer a few quick questions so I can give precise legal steps:</strong><br><br>
+      <ul>
+        <li>Did you stop after the collision or drove away?</li>
+        <li>Anyone injured? If yes, are they being treated/ambulance called?</li>
+        <li>Was the other vehicle/person present and do you have their contact/vehicle number?</li>
+        <li>Date, time and place of the accident?</li>
+        <li>Is your vehicle insured (third‑party/own damage)?</li>
+      </ul>
+      <br>
+      <strong>Immediate steps you should take right now</strong>
+      <ul>
+        <li>Stop and stay at the scene (if you haven’t). Leaving may attract criminal liability.</li>
+        <li>Call police and, if anyone is injured, call ambulance/medical help immediately.</li>
+        <li>Ensure safety first: move vehicles to a safe spot if possible but don’t alter evidence.</li>
+        <li>Exchange details with the other driver: name, contact, vehicle number, insurer. Note witnesses and their contacts.</li>
+        <li>Take clear photos and short videos of: damage to both vehicles, license plates, surrounding scene, road marks, traffic signals, any injuries. Time‑stamp if possible.</li>
+        <li>Do NOT admit legal guilt or say “I’m sorry” in an admissional sense on video/text — polite concern is ok, but avoid statements that can be used as confession.</li>
+        <li>If police arrive, cooperate and give truthful answers. Ask for a copy of any report/GD/FIR.</li>
+        <li>Notify your insurer immediately and share photos and police report. Follow insurer’s instructions before repairs.</li>
+        <li>If the other party offers to “settle” privately on the spot, be cautious: small damages can be settled, but if there’s any injury or disagreement, better involve police and insurers and document any settlement in writing.</li>
+      </ul>
+      <br>
+      <strong>Possible legal consequences (short)</strong>
+      <ul>
+        <li>If you stopped and cooperated, and damage is minor, matter often resolves via insurer or compounding.</li>
+        <li>If you fled the scene or there are serious injuries/death, criminal charges can follow (rash/negligent driving, hit‑and‑run consequences) and FIR/investigation is likely.</li>
+        <li>Your insurance may cover third‑party damage, but non‑cooperation or misrepresentation can void claims.</li>
+      </ul>
+      <br>
+      If you want, I can:<br>
+      - Draft a short written statement you can give to police/insurer.<br>
+      - Draft a complaint/FIR wording if the other party refuses to cooperate or has injured someone.<br><br>
+      Reply with the answers to the questions (and a photo of the damage if you want help drafting statements).`;
+
+    addBotMessage(nyayGuruMessage);
+
+    // Provide action buttons
+    const actionButtons = `
+      <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="document-btn" onclick="generateAccidentStatement()">📄 Draft Police/Insurer Statement</button>
+        <button class="document-btn" onclick="generateAccidentFIR()">📄 Draft FIR/Complaint</button>
+      </div>
+    `;
+    addBotMessage(actionButtons);
+    return;
+  }
+
   for (const key in legalData) {
     const data = legalData[key];
     const hasKeyword = data.keywords.some(keyword => lowerMessage.includes(keyword));
@@ -274,4 +331,98 @@ function downloadChat() {
   URL.revokeObjectURL(url);
 
   addBotMessage("Your chat history has been downloaded successfully!");
+}
+
+// Dynamic generators for accident-related documents
+window.generateAccidentStatement = function generateAccidentStatement() {
+  const basics = collectAccidentInputs();
+  if (!basics) return; // user cancelled
+
+  const { stopped, injuries, otherDetails, datetime, place, insurance, summary } = basics;
+
+  const content = [
+    "Police/Insurer Statement - Road Accident",
+    "========================================",
+    `Name: ${userName || "(Your Name)"}`,
+    `Date/Time of Incident: ${datetime}`,
+    `Place of Incident: ${place}`,
+    "",
+    "Incident Summary:",
+    summary,
+    "",
+    "Key Details:",
+    `- Stopped at scene: ${stopped}`,
+    `- Any injuries and medical help: ${injuries}`,
+    `- Other party/contact/vehicle details: ${otherDetails}`,
+    `- Vehicle Insurance: ${insurance}`,
+    "",
+    "I confirm the above information is true to the best of my knowledge.",
+    "",
+    "Signature: _______________________",
+    `Date: ${new Date().toLocaleDateString()}`
+  ].join("\n");
+
+  triggerDownload(content, `Accident_Statement_${(userName||"User").replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.txt`);
+  addBotMessage("Your police/insurer statement draft has been generated and downloaded.");
+}
+
+window.generateAccidentFIR = function generateAccidentFIR() {
+  const basics = collectAccidentInputs();
+  if (!basics) return; // user cancelled
+
+  const { stopped, injuries, otherDetails, datetime, place, insurance, summary } = basics;
+
+  const content = [
+    "Draft FIR/Complaint - Road Accident",
+    "====================================",
+    `Complainant: ${userName || "(Your Name)"}`,
+    `Date/Time of Incident: ${datetime}`,
+    `Place: ${place}`,
+    "",
+    "Brief Facts:",
+    summary,
+    "",
+    "Additional Information:",
+    `- I ${stopped.toLowerCase()} after the collision.`,
+    `- Injuries/medical assistance: ${injuries}`,
+    `- Other party & vehicle details: ${otherDetails}`,
+    `- Insurance status: ${insurance}`,
+    "",
+    "Request:",
+    "I request that an FIR/complaint be registered and appropriate action be taken for rash/negligent driving and any other applicable offences. I am willing to cooperate in the investigation and provide evidence (photos/videos/witness details).",
+    "",
+    "Signature: ______________________",
+    `Date: ${new Date().toLocaleDateString()}`
+  ].join("\n");
+
+  triggerDownload(content, `Accident_FIR_${(userName||"User").replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.txt`);
+  addBotMessage("Your FIR/complaint draft has been generated and downloaded.");
+}
+
+function collectAccidentInputs() {
+  try {
+    const stopped = prompt("Did you stop after the collision or drove away? (e.g., Stopped and cooperated)") || "(Not provided)";
+    const injuries = prompt("Anyone injured? If yes, are they being treated/ambulance called?") || "(Not provided)";
+    const otherDetails = prompt("Other party present? Their contact/vehicle number? Any witnesses?") || "(Not provided)";
+    const datetime = prompt("Date, time of the accident (e.g., 21 Oct 2025, 6:30 PM)") || "(Not provided)";
+    const place = prompt("Place of the accident (landmark/road/city)") || "(Not provided)";
+    const insurance = prompt("Is your vehicle insured? (third‑party/own damage/not sure)") || "(Not provided)";
+    const summary = prompt("Briefly describe what happened (1-4 lines)") || "(Not provided)";
+
+    return { stopped, injuries, otherDetails, datetime, place, insurance, summary };
+  } catch (e) {
+    return null;
+  }
+}
+
+function triggerDownload(text, filename) {
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
