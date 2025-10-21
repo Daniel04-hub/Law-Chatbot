@@ -287,6 +287,8 @@ function removeTypingIndicator() {
 function processUserMessage(message) {
   const lowerMessage = message.toLowerCase();
   let matchFound = false;
+  // Extract generic keywords from any natural sentence
+  const detectedKeywords = extractKeywords(lowerMessage);
 
   // If user types search … in chat, perform keyword search
   if (lowerMessage.startsWith("search ") || lowerMessage.startsWith("find ")) {
@@ -381,7 +383,7 @@ function processUserMessage(message) {
       const response = `Based on your statement, ${userName}, this appears to relate to <strong>${key.replace(/\b\w/g, c => c.toUpperCase())}</strong>. I recommend consulting with a <strong>${data.lawyer}</strong>. ` +
         `This matter typically falls under <strong>${data.section}</strong>.<br><br>` +
         `${lawyerName !== "a qualified lawyer" ? `I suggest you reach out to ${lawyerName}, who specializes in this area. ` : ""}` +
-        `${formatKeyPointsForReply(keyPoints)}${formatSolutionsForCategory(data)}` +
+        `${formatDetectedKeywords(detectedKeywords)}${formatKeyPointsForReply(keyPoints)}${formatSolutionsForCategory(data)}` +
         `<br>I've prepared a relevant document for you to download.`;
 
       addBotMessage(response, data.document);
@@ -410,14 +412,29 @@ function processUserMessage(message) {
         const data = legalData[classification.key];
         const response = `Based on your statement, ${userName}, this likely involves <strong>${classification.key.replace(/\b\w/g, c => c.toUpperCase())}</strong>. ` +
           `Recommended expert: <strong>${data.lawyer}</strong>. Applicable law: <strong>${data.section}</strong>.<br>` +
-          `${formatKeyPointsForReply(keyPoints)}${formatSolutionsForCategory(data)}` +
+          `${formatDetectedKeywords(detectedKeywords)}${formatKeyPointsForReply(keyPoints)}${formatSolutionsForCategory(data)}` +
           `<br>Do you want me to generate a tailored draft? <button class="document-btn" onclick="generateCategoryDraft()">📄 Generate Draft</button>`;
         addBotMessage(response, data.document);
       } else {
-        const generalResponse = `I understand you're seeking help with: "${message}". ` +
-          `${formatKeyPointsForReply(keyPoints)}` +
-          `If you can add 1-2 more specific keywords (e.g., divorce, theft, property, contract, rent, assault, GST), I can give more precise steps.`;
-        addBotMessage(generalResponse);
+        // Try to use extracted keywords to suggest relevant legal topics
+        const suggestions = rankCategoriesByKeywords(detectedKeywords);
+        if (suggestions.length > 0) {
+          const list = suggestions.slice(0, 5).map(r => `
+            <div class="law-result-item">
+              <div>
+                <div><strong>${titleCaseCategory(r.key)}</strong> — ${r.data.section}</div>
+                <div class="meta">Lawyer: ${r.data.lawyer}${r.matched && r.matched.length ? ` • Matched: ${r.matched.join(', ')}` : ''}</div>
+              </div>
+              <button class="document-btn" onclick="startTopicChat('${r.key}')">Ask about ${titleCaseCategory(r.key)}</button>
+            </div>
+          `).join('');
+          addBotMessage(`I picked up these keywords from your message: <strong>${escapeHtml(detectedKeywords.join(', '))}</strong>.<br>These topics seem relevant — pick one to continue:<div class="law-search-results">${list}</div>`);
+        } else {
+          const generalResponse = `I understand you're seeking help with: "${escapeHtml(message)}". ` +
+            `${formatDetectedKeywords(detectedKeywords)}${formatKeyPointsForReply(keyPoints)}` +
+            `If you can add 1-2 more specific legal words (e.g., divorce, theft, property, contract, rent, assault, GST), I can give more precise steps. You can also type <em>search your keywords</em>.`;
+          addBotMessage(generalResponse);
+        }
       }
     }
   }
@@ -584,6 +601,11 @@ function formatSolutionsForCategory(data) {
   return `${steps}${docs}`;
 }
 
+function formatDetectedKeywords(keywords) {
+  if (!keywords || !keywords.length) return "";
+  return `<em>Detected keywords: ${escapeHtml(keywords.slice(0, 6).join(', '))}</em><br>`;
+}
+
 // ————— Solutions rendering & click-to-ask ————— //
 function titleCaseCategory(key) {
   const map = { gst: "GST", ip: "IP", fir: "FIR" };
@@ -665,6 +687,52 @@ function wireLawSearchInput() {
 wireLawSearchInput();
 
 // ————— Helpers: classification & key-points ————— //
+const STOPWORDS = new Set([
+  'i','me','my','myself','we','our','ours','ourselves','you','your','yours','yourself','yourselves',
+  'he','him','his','himself','she','her','hers','herself','it','its','itself','they','them','their','theirs','themselves',
+  'what','which','who','whom','this','that','these','those','am','is','are','was','were','be','been','being','have','has','had','having',
+  'do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against',
+  'between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again',
+  'further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such',
+  'no','nor','not','only','own','same','so','than','too','very','can','will','just','don','should','now','help','please','need','issue','problem'
+]);
+
+function extractKeywords(text, max = 8) {
+  if (!text) return [];
+  const tokens = text
+    .toLowerCase()
+    .replace(/[^a-z0-9+\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w && w.length >= 3 && !STOPWORDS.has(w));
+  if (tokens.length === 0) return [];
+  const freq = new Map();
+  for (const t of tokens) freq.set(t, (freq.get(t) || 0) + 1);
+  const ranked = [...freq.entries()].sort((a,b) => b[1]-a[1]).map(([w]) => w);
+  return ranked.slice(0, max);
+}
+
+function rankCategoriesByKeywords(keywords) {
+  if (!keywords || !keywords.length) return [];
+  const results = [];
+  for (const key in legalData) {
+    const data = legalData[key];
+    let score = 0;
+    const matched = [];
+    for (const kw of keywords) {
+      // match against defined keywords, category key, lawyer, and section text
+      const inDefined = data.keywords.some(k => k.includes(kw) || kw.includes(k));
+      const inKey = key.includes(kw);
+      const inLawyer = data.lawyer.toLowerCase().includes(kw);
+      const inSection = data.section.toLowerCase().includes(kw);
+      if (inDefined || inKey || inLawyer || inSection) {
+        score += inDefined ? 3 : (inSection ? 2 : 1);
+        matched.push(kw);
+      }
+    }
+    if (score > 0) results.push({ key, data, score, matched: Array.from(new Set(matched)) });
+  }
+  return results.sort((a,b) => b.score - a.score).slice(0, 10);
+}
 function classifyCategory(lowerMessage) {
   let bestKey = null;
   let bestScore = 0;
