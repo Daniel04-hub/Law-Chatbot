@@ -32,3 +32,20 @@ cd Law-Chatbot\project
 - GitHub Pages: https://daniel04-hub.github.io/Law-Chatbot/
 
 > Note: If the Pages URL changes (custom domain or org settings), see the repo’s Settings → Pages for the current link.
+
+## 2. Static Site Hosting
+
+- Purpose: Serve static websites (HTML, CSS, JS, images) at a public URL with minimal ops.
+- Features: Free HTTPS, automatic deployments from the repository, custom domain + subpath support, and access controls via the repo.
+- Use case: Documentation sites, portfolios, SPAs, demos, and simple apps without a backend.
+
+### How we host this project
+- Platform: GitHub Pages
+- Flow: Push to `main` → GitHub Actions builds (none needed here) → Pages publishes the contents of `project/` to the live URL.
+- URL: https://daniel04-hub.github.io/Law-Chatbot/
+
+### Notes & tips
+- Use relative paths for assets (e.g., `script.js`, `favicon.svg`) so it works under the `/Law-Chatbot/` subpath.
+- Avoid absolute root paths like `/image.png` on GitHub Pages subpaths.
+- Deployment status: Check the repo’s Actions and Settings → Pages for the latest publish logs.
+- Custom domain: Configure DNS (CNAME) and set the domain in Settings → Pages; Pages will create a `CNAME` file.
