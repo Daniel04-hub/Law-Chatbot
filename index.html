@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LegalGuru AI - Your Personal Legal Assistant</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 2L4 8V14C4 21 9 27 16 30C23 27 28 21 28 14V8L16 2Z" fill="#D4AF37"/>
+            <path d="M16 8L10 11V15C10 19 12.5 23 16 25C19.5 23 22 19 22 15V11L16 8Z" fill="#0A2647"/>
+          </svg>
+          <span class="logo-text">LegalGuru AI</span>
+        </div>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <h1>Your Personal Legal Assistant</h1>
+        <p>Get instant legal guidance, lawyer recommendations, and downloadable documents</p>
+        <button class="cta-button" onclick="openChatModal()">Start Free Consultation</button>
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <div class="container">
+        <h2>About LegalGuru AI</h2>
+        <p>LegalGuru AI is an intelligent legal assistant designed to provide instant guidance on various legal matters. Our AI-powered chatbot helps you understand your legal situation, recommends specialized lawyers, and provides relevant legal documentation.</p>
+      </div>
+    </section>
+
+    
+
+    
+
+    <footer class="footer">
+      <div class="container">
+        <p>&copy; 2025 LegalGuru AI. All rights reserved.</p>
+        <p class="disclaimer">This chatbot provides general legal information and is not a substitute for professional advice.</p>
+      </div>
+    </footer>
+
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <h2>Welcome to LegalGuru AI</h2>
+        <p>Let's personalize your experience</p>
+        <form id="welcomeForm">
+          <div class="form-group">
+            <label for="userName">Your Name</label>
+            <input type="text" id="userName" required placeholder="Enter your name">
+          </div>
+          <div class="form-group">
+            <label for="lawyerName">Preferred Lawyer Name (Optional)</label>
+            <input type="text" id="lawyerName" placeholder="e.g., Adv. Sharma">
+          </div>
+          <button type="submit" class="submit-btn">Start Chat</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="chatWidget" class="chat-widget">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="bot-avatar">⚖️</div>
+          <div>
+            <h3>LegalGuru AI</h3>
+            <span class="status">Online</span>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <button class="icon-btn" onclick="downloadChat()" title="Download Chat">📥</button>
+          <button class="icon-btn" onclick="closeChatWidget()" title="Close">✕</button>
+        </div>
+      </div>
+      <div id="chatMessages" class="chat-messages"></div>
+      <div class="chat-input-container">
+        <input type="text" id="chatInput" placeholder="Describe your legal issue..." autocomplete="off">
+        <button id="sendBtn" onclick="sendMessage()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <button id="chatToggle" class="chat-toggle" onclick="openChatModal()">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 14C24 19.52 19.52 24 14 24C12.4 24 10.88 23.64 9.52 23L4 24L5 18.48C4.36 17.12 4 15.6 4 14C4 8.48 8.48 4 14 4C19.52 4 24 8.48 24 14Z" fill="white"/>
+      </svg>
+    </button>
+
+    <script type="module" src="/script.js"></script>
+  </body>
+</html>
