@@ -5,13 +5,13 @@
 }
 
 :root {
-  --primary: #0A2647;
-  --secondary: #144272;
-  --accent: #D4AF37;
-  --light: #F8F9FA;
+  --primary: #C62828; /* deep red */
+  --secondary: #000000; /* black */
+  --accent: #E53935; /* bright red */
+  --light: #F7F7F7;
   --white: #FFFFFF;
-  --text-dark: #2C3E50;
-  --text-light: #7F8C8D;
+  --text-dark: #1A1A1A;
+  --text-light: #9AA0A6;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
@@ -64,11 +64,17 @@ body {
   text-decoration: none;
   color: var(--text-dark);
   font-weight: 500;
+  position: relative;
   transition: color 0.3s;
+  background: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
 }
 
 .nav-links a:hover {
   color: var(--accent);
+  background-size: 100% 2px;
 }
 
 .hero {
@@ -97,7 +103,7 @@ body {
 
 .cta-button {
   background: var(--accent);
-  color: var(--primary);
+  color: var(--white);
   border: none;
   padding: 1rem 2.5rem;
   font-size: 1.1rem;
@@ -110,7 +116,7 @@ body {
 
 .cta-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 10px 25px rgba(229, 57, 53, 0.35);
 }
 
 .container {
@@ -166,11 +172,18 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: fadeIn 0.5s ease both;
 }
 
 .solution-card h3 {
   color: var(--primary);
   margin-bottom: 0.25rem;
+}
+
+.solution-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.12);
 }
 
 .solution-meta {
@@ -208,11 +221,18 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .law-result-item .meta {
   color: var(--text-light);
   font-size: 0.9rem;
+}
+
+.law-result-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(229,57,53,0.35);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
 }
 
 .chat-section {
@@ -227,7 +247,7 @@ h2 {
 }
 
 .footer {
-  background: var(--primary);
+  background: var(--secondary);
   color: var(--white);
   padding: 3rem 2rem;
   text-align: center;
@@ -455,7 +475,7 @@ h2 {
   margin-top: 0.75rem;
   padding: 0.625rem 1.25rem;
   background: var(--accent);
-  color: var(--primary);
+  color: var(--white);
   text-decoration: none;
   border-radius: 6px;
   font-weight: 600;
@@ -594,6 +614,22 @@ h2 {
     opacity: 1;
   }
 }
+
+/* Subtle pulse for primary CTA elements */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.5); }
+  70% { box-shadow: 0 0 0 14px rgba(198, 40, 40, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(198, 40, 40, 0); }
+}
+
+.chat-toggle:hover,
+.cta-button:active {
+  animation: pulseGlow 1.2s ease-out;
+}
+
+/* Improve link visibility in dark footer */
+.footer a { color: #FFCDD2; text-decoration: underline; }
+.footer a:hover { color: #FFFFFF; }
 
 @media (max-width: 768px) {
   .nav-links {
