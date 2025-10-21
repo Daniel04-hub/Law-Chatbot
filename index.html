@@ -44,7 +44,11 @@
       <section id="solutions" class="solutions">
         <div class="container">
           <h2>Legal Solutions & Sections</h2>
-          <p style="text-align:center;color:#7F8C8D;max-width:800px;margin:0 auto 1.5rem;">Browse common legal categories. Each card shows the typical applicable law and the type of lawyer who handles it. Click “Ask about …” to start a chat pre-filled with that topic.</p>
+          <p style="text-align:center;color:#7F8C8D;max-width:800px;margin:0 auto 1.5rem;">Browse common legal categories or search by keywords. Each card shows the typical applicable law and the type of lawyer who handles it. Click “Ask about …” to start a chat pre-filled with that topic.</p>
+          <div class="law-search">
+            <input id="lawSearchInput" type="text" placeholder="Search law sections by keywords (e.g., theft, GST, custody, rent)" autocomplete="off" />
+          </div>
+          <div id="lawSearchResults" class="law-search-results"></div>
           <div id="solutionsGrid" class="solutions-grid"></div>
         </div>
       </section>

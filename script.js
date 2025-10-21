@@ -3,73 +3,170 @@ const legalData = {
     lawyer: "Family Law Lawyer",
     section: "Section 13, Hindu Marriage Act, 1955",
     document: "divorce_notice.pdf",
-    keywords: ["divorce", "separation", "matrimonial", "marriage dissolution"]
+    keywords: ["divorce", "separation", "matrimonial", "marriage dissolution"],
+    solutions: [
+      "Collect marriage certificate and any prior legal notices/orders.",
+      "List grounds for divorce (cruelty, desertion, mutual consent, etc.).",
+      "Consult a family lawyer and file in the competent family court.",
+      "Discuss interim maintenance, custody, and residence orders if needed."
+    ],
+    documents: ["Marriage certificate", "ID/address proof", "Evidence supporting grounds", "Any prior complaints/orders"]
   },
   theft: {
     lawyer: "Criminal Defence Lawyer",
     section: "Section 378, Indian Penal Code",
     document: "theft_complaint.pdf",
-    keywords: ["theft", "stolen", "robbery", "burglary", "larceny"]
+    keywords: ["theft", "stolen", "robbery", "burglary", "larceny"],
+    solutions: [
+      "Immediately file a police complaint/FIR with details of stolen items.",
+      "Preserve and share any CCTV/photos/IMEI/serial numbers as evidence.",
+      "Provide witness details if any and keep purchase bills ready.",
+      "Inform insurer (if applicable) and follow claim process."
+    ],
+    documents: ["List of stolen items with approximate value", "Photos/CCTV", "Receipts/IMEI/serial numbers", "ID proof"]
   },
   contract: {
     lawyer: "Corporate Lawyer",
     section: "Indian Contract Act, 1872",
     document: "contract_template.pdf",
-    keywords: ["contract", "agreement", "breach", "business deal", "commercial"]
+    keywords: ["contract", "agreement", "breach", "business deal", "commercial"],
+    solutions: [
+      "Review contract terms on breach/termination/liquidated damages.",
+      "Send a legal notice specifying breach and cure period.",
+      "Attempt mediation; failing which, file suit/arbitration as per clause.",
+      "Preserve email/communication trail and deliverables."
+    ],
+    documents: ["Signed contract", "Emails/letters", "Invoices/POs", "Delivery/acceptance records"]
   },
   property: {
     lawyer: "Property & Real Estate Lawyer",
     section: "Transfer of Property Act, 1882",
     document: "property_dispute.pdf",
-    keywords: ["property", "land", "real estate", "sale deed", "property dispute", "land dispute"]
+    keywords: ["property", "land", "real estate", "sale deed", "property dispute", "land dispute"],
+    solutions: [
+      "Collect title documents, encumbrance certificates, and tax receipts.",
+      "Issue notice to opposing party; consider mediation for boundary/possession issues.",
+      "File civil suit for injunction/declaration/specific performance as needed.",
+      "Update land records and register orders as required."
+    ],
+    documents: ["Sale deed/Title papers", "Mutation/RTC/Patta", "Tax receipts", "Site plan/photos"]
   },
   rent: {
     lawyer: "Civil Lawyer (Tenancy)",
     section: "Rent Control Act",
     document: "rent_agreement.pdf",
-    keywords: ["rent", "tenant", "landlord", "eviction", "lease", "tenancy"]
+    keywords: ["rent", "tenant", "landlord", "eviction", "lease", "tenancy"],
+    solutions: [
+      "Check tenancy terms, notice period, and rent arrears.",
+      "Serve legal notice for eviction/arrears as per local Rent Act.",
+      "File eviction/suit for recovery if default continues.",
+      "Document payment history and communications."
+    ],
+    documents: ["Rent agreement", "Rent payment proof", "Correspondence", "ID/address proof"]
   },
   dowry: {
     lawyer: "Family & Criminal Lawyer",
     section: "Section 498A, Indian Penal Code",
     document: "dowry_complaint.pdf",
-    keywords: ["dowry", "498a", "harassment", "domestic violence", "cruelty"]
+    keywords: ["dowry", "498a", "harassment", "domestic violence", "cruelty"],
+    solutions: [
+      "If in immediate danger, call police and seek protection.",
+      "File complaint regarding cruelty/harassment; consider DV Act protection orders.",
+      "Preserve evidence: messages, medical reports, witness accounts.",
+      "Seek counselling/shelter services and legal aid where applicable."
+    ],
+    documents: ["Complaint details", "Medical reports (if any)", "Photos/messages/call logs", "Marriage-related documents"]
   },
   assault: {
     lawyer: "Criminal Defence Lawyer",
     section: "Section 351, Indian Penal Code",
     document: "assault_complaint.pdf",
-    keywords: ["assault", "attack", "physical violence", "beating", "harm"]
+    keywords: ["assault", "attack", "physical violence", "beating", "harm"],
+    solutions: [
+      "Get medical attention and record injuries immediately.",
+      "File FIR/complaint with detailed description, time, place, and assailants.",
+      "Provide medical certificate/photos and witness details.",
+      "Cooperate with investigation and seek protection if required."
+    ],
+    documents: ["Medical reports/photos", "Witness details", "CCTV if available", "ID proof"]
   },
   cheating: {
     lawyer: "Criminal Lawyer",
     section: "Section 420, Indian Penal Code",
     document: "cheating_complaint.pdf",
-    keywords: ["cheating", "fraud", "scam", "deceive", "420"]
+    keywords: ["cheating", "fraud", "scam", "deceive", "420"],
+    solutions: [
+      "Gather proof of inducement, reliance, and wrongful loss.",
+      "File a criminal complaint for cheating and consider a civil recovery suit.",
+      "Freeze transactions where possible; inform bank/payment gateway.",
+      "Preserve chats/emails/receipts and identify accused details."
+    ],
+    documents: ["Payment proofs", "Chats/emails", "ID/Address of accused (if known)", "Screenshots of promises/ads"]
   },
   gst: {
     lawyer: "Tax & Corporate Lawyer",
     section: "Goods and Services Tax Act, 2017",
     document: "gst_query.pdf",
-    keywords: ["gst", "tax", "goods and services", "taxation", "return"]
+    keywords: ["gst", "tax", "goods and services", "taxation", "return"],
+    solutions: [
+      "Identify compliance lapse (registration/returns/input credit).",
+      "Respond to notices within timelines; compute liabilities + interest.",
+      "File revised/late returns as permitted; consider appeal for disputes.",
+      "Maintain reconciliations (GSTR-1/3B/2B) and ledgers."
+    ],
+    documents: ["GST returns & ledgers", "Invoices", "Notices/orders", "Bank statements"]
   },
   labour: {
     lawyer: "Labour & Employment Lawyer",
     section: "Industrial Disputes Act, 1947",
     document: "labour_dispute.pdf",
-    keywords: ["labour", "employee", "employment", "termination", "wrongful dismissal", "workplace"]
+    keywords: ["labour", "employee", "employment", "termination", "wrongful dismissal", "workplace"],
+    solutions: [
+      "Collect employment contract, payslips, and termination letter (if any).",
+      "Send demand/legal notice; approach labour authorities for conciliation.",
+      "File claim for back wages/reinstatement/compensation as applicable.",
+      "Preserve internal emails and HR communications."
+    ],
+    documents: ["Appointment letter", "Payslips/Bank statements", "HR emails", "ID/Employee ID"]
   },
   trademark: {
     lawyer: "Intellectual Property Lawyer",
     section: "Trade Marks Act, 1999",
     document: "trademark_application.pdf",
-    keywords: ["trademark", "brand", "logo", "copyright", "patent", "intellectual property"]
+    keywords: ["trademark", "brand", "logo", "copyright", "patent", "intellectual property"],
+    solutions: [
+      "Conduct a trademark availability search and choose correct class(es).",
+      "File application; respond to examination report/opposition if any.",
+      "Monitor misuse; issue cease & desist notices to infringers.",
+      "Maintain usage evidence for enforcement."
+    ],
+    documents: ["Logo/word mark samples", "Usage proof", "Class details", "Applicant ID/address"]
   },
   defamation: {
     lawyer: "Civil & Criminal Lawyer",
     section: "Section 499, Indian Penal Code",
     document: "defamation_notice.pdf",
-    keywords: ["defamation", "slander", "libel", "reputation", "false statement"]
+    keywords: ["defamation", "slander", "libel", "reputation", "false statement"],
+    solutions: [
+      "Collect defamatory content (screenshots/links) and identify publisher.",
+      "Send legal notice seeking takedown/apology; consider civil/criminal action.",
+      "File suit/complaint where harm occurred; quantify damages if possible.",
+      "Avoid republishing defamation in complaint—quote minimally or attach."
+    ],
+    documents: ["Screenshots/URLs", "Witness statements (if any)", "Proof of harm/loss", "ID/address proof"]
+  },
+  hit_and_run: {
+    lawyer: "Criminal Defence Lawyer",
+    section: "Rash/Negligent Driving (IPC) and Motor Vehicles Act provisions",
+    document: null,
+    keywords: ["hit and run", "ran away", "drove away", "rash driving", "negligent driving"],
+    solutions: [
+      "Do not leave the scene; call police and medical help if injuries.",
+      "Document scene (photos/videos) and exchange details with parties.",
+      "Cooperate with investigation; inform insurer promptly.",
+      "Seek legal counsel if FIR is registered."
+    ],
+    documents: ["Photos/videos", "Vehicle/Policy details", "Witness contacts", "Medical reports (if any)"]
   }
 };
 
@@ -191,6 +288,27 @@ function processUserMessage(message) {
   const lowerMessage = message.toLowerCase();
   let matchFound = false;
 
+  // If user types search … in chat, perform keyword search
+  if (lowerMessage.startsWith("search ") || lowerMessage.startsWith("find ")) {
+    const q = message.replace(/^\s*(search|find)\s+/i, "").trim();
+    const results = keywordSearchLaws(q);
+    if (results.length === 0) {
+      addBotMessage(`No direct matches for "${escapeHtml(q)}". Try keywords like: ${Object.keys(legalData).slice(0,6).join(', ')}.`);
+    } else {
+      const list = results.map(r => `
+        <div class="law-result-item">
+          <div>
+            <div><strong>${titleCaseCategory(r.key)}</strong> — ${r.data.section}</div>
+            <div class="meta">Lawyer: ${r.data.lawyer}</div>
+          </div>
+          <button class="document-btn" onclick="startTopicChat('${r.key}')">Ask about ${titleCaseCategory(r.key)}</button>
+        </div>
+      `).join('');
+      addBotMessage(`<div class="law-search-results">${list}</div>`);
+    }
+    return;
+  }
+
   // Accident/traffic collision flow (Legal Chatbot)
   const accidentKeywords = [
     "accident", "crash", "collision", "collided", "hit a car", "hit car", "hit someone",
@@ -263,7 +381,7 @@ function processUserMessage(message) {
       const response = `Based on your statement, ${userName}, this appears to relate to <strong>${key.replace(/\b\w/g, c => c.toUpperCase())}</strong>. I recommend consulting with a <strong>${data.lawyer}</strong>. ` +
         `This matter typically falls under <strong>${data.section}</strong>.<br><br>` +
         `${lawyerName !== "a qualified lawyer" ? `I suggest you reach out to ${lawyerName}, who specializes in this area. ` : ""}` +
-        `${formatKeyPointsForReply(keyPoints)}` +
+        `${formatKeyPointsForReply(keyPoints)}${formatSolutionsForCategory(data)}` +
         `<br>I've prepared a relevant document for you to download.`;
 
       addBotMessage(response, data.document);
@@ -292,7 +410,7 @@ function processUserMessage(message) {
         const data = legalData[classification.key];
         const response = `Based on your statement, ${userName}, this likely involves <strong>${classification.key.replace(/\b\w/g, c => c.toUpperCase())}</strong>. ` +
           `Recommended expert: <strong>${data.lawyer}</strong>. Applicable law: <strong>${data.section}</strong>.<br>` +
-          `${formatKeyPointsForReply(keyPoints)}` +
+          `${formatKeyPointsForReply(keyPoints)}${formatSolutionsForCategory(data)}` +
           `<br>Do you want me to generate a tailored draft? <button class="document-btn" onclick="generateCategoryDraft()">📄 Generate Draft</button>`;
         addBotMessage(response, data.document);
       } else {
@@ -455,6 +573,17 @@ function triggerDownload(text, filename) {
   URL.revokeObjectURL(url);
 }
 
+function formatSolutionsForCategory(data) {
+  if (!data) return "";
+  const steps = Array.isArray(data.solutions) && data.solutions.length
+    ? `<br><strong>Recommended steps:</strong><ul>${data.solutions.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>`
+    : "";
+  const docs = Array.isArray(data.documents) && data.documents.length
+    ? `<strong>Documents to prepare:</strong><ul>${data.documents.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>`
+    : "";
+  return `${steps}${docs}`;
+}
+
 // ————— Solutions rendering & click-to-ask ————— //
 function titleCaseCategory(key) {
   const map = { gst: "GST", ip: "IP", fir: "FIR" };
@@ -496,6 +625,44 @@ window.startTopicChat = function startTopicChat(key) {
 
 // Initialize Solutions on load
 renderSolutions();
+
+// ————— Keyword search (Solutions UI + chat) ————— //
+function keywordSearchLaws(query) {
+  const q = query.toLowerCase();
+  const scored = Object.entries(legalData).map(([key, data]) => {
+    const score = data.keywords.reduce((acc, kw) => acc + (q.includes(kw) ? 2 : 0), 0)
+      + (data.section.toLowerCase().includes(q) ? 3 : 0)
+      + (data.lawyer.toLowerCase().includes(q) ? 1 : 0)
+      + (key.includes(q) ? 2 : 0);
+    return { key, data, score };
+  }).filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8);
+  return scored;
+}
+
+function wireLawSearchInput() {
+  const input = document.getElementById('lawSearchInput');
+  const results = document.getElementById('lawSearchResults');
+  if (!input || !results) return;
+  input.addEventListener('input', () => {
+    const q = input.value.trim();
+    if (!q) { results.innerHTML = ''; return; }
+    const matches = keywordSearchLaws(q);
+    if (matches.length === 0) { results.innerHTML = '<div class="law-result-item">No results</div>'; return; }
+    results.innerHTML = matches.map(r => `
+      <div class="law-result-item">
+        <div>
+          <div><strong>${titleCaseCategory(r.key)}</strong> — ${r.data.section}</div>
+          <div class="meta">Lawyer: ${r.data.lawyer}</div>
+        </div>
+        <button class="document-btn" onclick="startTopicChat('${r.key}')">Ask about ${titleCaseCategory(r.key)}</button>
+      </div>
+    `).join('');
+  });
+}
+
+wireLawSearchInput();
 
 // ————— Helpers: classification & key-points ————— //
 function classifyCategory(lowerMessage) {

@@ -178,6 +178,43 @@ h2 {
   font-size: 0.95rem;
 }
 
+.law-search {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.law-search input {
+  max-width: 720px;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 2px solid #E0E0E0;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.law-search-results {
+  max-width: 800px;
+  margin: 1rem auto 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.law-result-item {
+  background: var(--white);
+  border: 1px solid #EAEAEA;
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.law-result-item .meta {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
 .chat-section {
   background: var(--white);
   text-align: center;
