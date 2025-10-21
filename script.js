@@ -76,6 +76,8 @@ const legalData = {
 let userName = "";
 let lawyerName = "";
 let chatHistory = [];
+let lastDetectedCategory = null;
+let lastExtractedKeyPoints = null;
 
 function openChatModal() {
   document.getElementById("welcomeModal").style.display = "block";
@@ -237,18 +239,28 @@ function processUserMessage(message) {
     return;
   }
 
+  // Generic classification + key point extraction
+  const classification = classifyCategory(lowerMessage);
+  const keyPoints = analyzeMessage(message);
+  lastDetectedCategory = classification?.key || null;
+  lastExtractedKeyPoints = keyPoints;
+
   for (const key in legalData) {
     const data = legalData[key];
     const hasKeyword = data.keywords.some(keyword => lowerMessage.includes(keyword));
 
     if (hasKeyword) {
       matchFound = true;
-      const response = `Based on your query, ${userName}, I recommend consulting with a <strong>${data.lawyer}</strong>. ` +
+      const response = `Based on your statement, ${userName}, this appears to relate to <strong>${key.replace(/\b\w/g, c => c.toUpperCase())}</strong>. I recommend consulting with a <strong>${data.lawyer}</strong>. ` +
         `This matter typically falls under <strong>${data.section}</strong>.<br><br>` +
         `${lawyerName !== "a qualified lawyer" ? `I suggest you reach out to ${lawyerName}, who specializes in this area. ` : ""}` +
-        `I've prepared a relevant document for you to download.`;
+        `${formatKeyPointsForReply(keyPoints)}` +
+        `<br>I've prepared a relevant document for you to download.`;
 
       addBotMessage(response, data.document);
+
+      // Offer tailored draft based on extracted info
+      addBotMessage(`Would you like a tailored draft based on your details? <br><button class="document-btn" onclick="generateCategoryDraft()">📄 Generate Draft</button>`);
 
       setTimeout(() => {
         const followUp = `Is there anything else you'd like to know about this matter, ${userName}? I'm here to help with any additional questions.`;
@@ -267,12 +279,19 @@ function processUserMessage(message) {
     } else if (lowerMessage.includes("bye") || lowerMessage.includes("goodbye")) {
       addBotMessage(`Goodbye, ${userName}! Remember, this is general legal information. Please consult ${lawyerName} for personalized advice.`);
     } else {
-      const generalResponse = `I understand you're seeking help with: "${message}". ` +
-        `While I don't have specific information about this particular issue, I recommend consulting with a general legal advisor who can guide you properly. ` +
-        `${lawyerName !== "a qualified lawyer" ? `You may want to reach out to ${lawyerName}. ` : ""}` +
-        `Could you provide more details or try rephrasing your query with keywords like: divorce, theft, property, contract, rent, assault, or GST?`;
-
-      addBotMessage(generalResponse);
+      if (classification && classification.score > 0) {
+        const data = legalData[classification.key];
+        const response = `Based on your statement, ${userName}, this likely involves <strong>${classification.key.replace(/\b\w/g, c => c.toUpperCase())}</strong>. ` +
+          `Recommended expert: <strong>${data.lawyer}</strong>. Applicable law: <strong>${data.section}</strong>.<br>` +
+          `${formatKeyPointsForReply(keyPoints)}` +
+          `<br>Do you want me to generate a tailored draft? <button class="document-btn" onclick="generateCategoryDraft()">📄 Generate Draft</button>`;
+        addBotMessage(response, data.document);
+      } else {
+        const generalResponse = `I understand you're seeking help with: "${message}". ` +
+          `${formatKeyPointsForReply(keyPoints)}` +
+          `If you can add 1-2 more specific keywords (e.g., divorce, theft, property, contract, rent, assault, GST), I can give more precise steps.`;
+        addBotMessage(generalResponse);
+      }
     }
   }
 }
@@ -425,4 +444,131 @@ function triggerDownload(text, filename) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// ————— Helpers: classification & key-points ————— //
+function classifyCategory(lowerMessage) {
+  let bestKey = null;
+  let bestScore = 0;
+  for (const key in legalData) {
+    const data = legalData[key];
+    const score = data.keywords.reduce((acc, kw) => acc + (lowerMessage.includes(kw) ? 1 : 0), 0);
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = key;
+    }
+  }
+  if (bestKey) return { key: bestKey, score: bestScore };
+  return null;
+}
+
+function analyzeMessage(text) {
+  const keyPoints = {
+    date: extractDate(text),
+    time: extractTime(text),
+    amount: extractAmount(text),
+    phone: extractPhone(text),
+    email: extractEmail(text),
+    vehicle: extractVehicle(text),
+    place: extractPlace(text),
+    parties: extractParties(text)
+  };
+  return keyPoints;
+}
+
+function formatKeyPointsForReply(points) {
+  if (!points) return "";
+  const items = [];
+  if (points.date) items.push(`<li>Date: ${points.date}</li>`);
+  if (points.time) items.push(`<li>Time: ${points.time}</li>`);
+  if (points.place) items.push(`<li>Place: ${escapeHtml(points.place)}</li>`);
+  if (points.amount) items.push(`<li>Amount: ${points.amount}</li>`);
+  if (points.phone) items.push(`<li>Phone: ${points.phone}</li>`);
+  if (points.email) items.push(`<li>Email: ${points.email}</li>`);
+  if (points.vehicle) items.push(`<li>Vehicle No.: ${points.vehicle}</li>`);
+  if (points.parties && points.parties.length) items.push(`<li>Parties: ${escapeHtml(points.parties.join(', '))}</li>`);
+  if (items.length === 0) return "";
+  return `<br><strong>Key points I detected:</strong><ul>${items.join('')}</ul>`;
+}
+
+// Simple extraction heuristics
+function extractDate(text) {
+  const m = text.match(/\b(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\d{1,2}\s*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s*\d{2,4})\b/i);
+  return m ? m[0] : null;
+}
+function extractTime(text) {
+  const m = text.match(/\b(\d{1,2}:\d{2}\s*(AM|PM)?|\d{1,2}\s*(AM|PM))\b/i);
+  return m ? m[0] : null;
+}
+function extractAmount(text) {
+  const m = text.match(/\b(Rs\.?|INR\s*)?\s?\d{3,}(,\d{3})*(\.\d{1,2})?\b/i);
+  return m ? m[0] : null;
+}
+function extractPhone(text) {
+  const m = text.match(/\b(\+?91[- ]?)?[6-9]\d{9}\b/);
+  return m ? m[0] : null;
+}
+function extractEmail(text) {
+  const m = text.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i);
+  return m ? m[0] : null;
+}
+function extractVehicle(text) {
+  // Simple Indian plate heuristic: e.g., MH12 AB 1234
+  const m = text.match(/\b[A-Z]{2}\d{1,2}\s?[A-Z]{1,2}\s?\d{3,4}\b/);
+  return m ? m[0] : null;
+}
+function extractPlace(text) {
+  const m = text.match(/\b(at|in|near|outside)\s+([A-Z][\w\-]*(\s+[A-Z][\w\-]*)*)/);
+  return m ? m[2] : null;
+}
+function extractParties(text) {
+  // Very rough: capture capitalized word sequences as names (limit 3)
+  const matches = text.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})\b/g);
+  if (!matches) return [];
+  // Filter out common words
+  const blacklist = new Set(["I", "The", "We", "He", "She", "They", "At", "In", "Near", "Outside", "On", "Of"]);
+  const names = matches.filter(w => !blacklist.has(w)).slice(0, 5);
+  return names;
+}
+
+// Draft generator for classified categories
+window.generateCategoryDraft = function generateCategoryDraft() {
+  const category = lastDetectedCategory;
+  const points = lastExtractedKeyPoints || {};
+  if (!category || !legalData[category]) {
+    addBotMessage("I couldn't determine a specific category to draft. Please add a bit more detail or keywords like 'divorce', 'theft', 'contract', etc.");
+    return;
+  }
+  const data = legalData[category];
+
+  const lines = [
+    `${category.toUpperCase()} - Draft Complaint/Notice`,
+    "====================================",
+    `Complainant: ${userName || "(Your Name)"}`,
+    `Category: ${category}`,
+    `Applicable Law/Section: ${data.section}`,
+    "",
+    "Brief Facts (as provided):",
+    chatHistory.filter(e => e.role === 'user').slice(-1)[0]?.message || "(Your statement here)",
+    "",
+    "Key Details:",
+    points.date ? `- Date: ${points.date}` : null,
+    points.time ? `- Time: ${points.time}` : null,
+    points.place ? `- Place: ${points.place}` : null,
+    points.amount ? `- Amount: ${points.amount}` : null,
+    points.phone ? `- Phone: ${points.phone}` : null,
+    points.email ? `- Email: ${points.email}` : null,
+    points.vehicle ? `- Vehicle No.: ${points.vehicle}` : null,
+    points.parties && points.parties.length ? `- Parties: ${points.parties.join(', ')}` : null,
+    "",
+    "Relief/Request:",
+    "I request that appropriate legal action/remedy be taken as per law, and I am willing to cooperate and provide further evidence as needed.",
+    "",
+    "Signature: ______________________",
+    `Date: ${new Date().toLocaleDateString()}`
+  ].filter(Boolean);
+
+  const filename = `${category}_Draft_${(userName||"User").replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.txt`;
+  triggerDownload(lines.join('\n'), filename);
+  addBotMessage("Your category-based draft has been generated and downloaded.");
 }
