@@ -271,12 +271,14 @@ h2 {
 
 .chat-widget {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 420px;
-  height: 600px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
   background: var(--white);
-  border-radius: 16px;
+  border-radius: 0;
   box-shadow: var(--shadow-lg);
   display: none;
   flex-direction: column;
@@ -288,7 +290,7 @@ h2 {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: var(--white);
   padding: 1.25rem;
-  border-radius: 16px 16px 0 0;
+  border-radius: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -401,7 +403,7 @@ h2 {
   display: flex;
   padding: 1rem;
   background: var(--white);
-  border-radius: 0 0 16px 16px;
+  border-radius: 0;
   border-top: 1px solid #E0E0E0;
 }
 
@@ -539,15 +541,6 @@ h2 {
   }
 
   /* Services section removed */
-
-  .chat-widget {
-    width: calc(100% - 2rem);
-    height: calc(100vh - 2rem);
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    margin: 0;
-  }
 
   .modal-content {
     margin: 20% 1rem;
