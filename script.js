@@ -180,7 +180,7 @@ function processUserMessage(message) {
   const lowerMessage = message.toLowerCase();
   let matchFound = false;
 
-  // Accident/traffic collision flow (NyayGuru)
+  // Accident/traffic collision flow (Legal Chatbot)
   const accidentKeywords = [
     "accident", "crash", "collision", "collided", "hit a car", "hit car", "hit someone",
     "ran into", "bike accident", "car accident", "scooter accident", "road accident",
@@ -189,8 +189,8 @@ function processUserMessage(message) {
   if (accidentKeywords.some(k => lowerMessage.includes(k))) {
     matchFound = true;
 
-    const nyayGuruMessage = `
-      <strong>As NyayGuru, I can help — please answer a few quick questions so I can give precise legal steps:</strong><br><br>
+    const legalChatbotMessage = `
+      <strong>As Legal Chatbot, I can help — please answer a few quick questions so I can give precise legal steps:</strong><br><br>
       <ul>
         <li>Did you stop after the collision or drove away?</li>
         <li>Anyone injured? If yes, are they being treated/ambulance called?</li>
@@ -224,7 +224,7 @@ function processUserMessage(message) {
       - Draft a complaint/FIR wording if the other party refuses to cooperate or has injured someone.<br><br>
       Reply with the answers to the questions (and a photo of the damage if you want help drafting statements).`;
 
-    addBotMessage(nyayGuruMessage);
+  addBotMessage(legalChatbotMessage);
 
     // Provide action buttons
     const actionButtons = `
