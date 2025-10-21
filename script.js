@@ -78,6 +78,7 @@ let lawyerName = "";
 let chatHistory = [];
 let lastDetectedCategory = null;
 let lastExtractedKeyPoints = null;
+let pendingAutoMessage = null;
 
 function openChatModal() {
   document.getElementById("welcomeModal").style.display = "block";
@@ -99,6 +100,14 @@ document.getElementById("welcomeForm").addEventListener("submit", function(e) {
 
   const welcomeMessage = `Hello ${userName}! I'm Legal Law Chat Bot, your personal legal assistant. I can help you with legal guidance, recommend specialized lawyers, and provide relevant documents. How can I assist you today?`;
   addBotMessage(welcomeMessage);
+
+  // If a topic was chosen from Solutions before chat opened, auto-send it now
+  if (pendingAutoMessage) {
+    const input = document.getElementById("chatInput");
+    input.value = pendingAutoMessage;
+    pendingAutoMessage = null;
+    sendMessage();
+  }
 });
 
 function sendMessage() {
@@ -445,6 +454,48 @@ function triggerDownload(text, filename) {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+// ————— Solutions rendering & click-to-ask ————— //
+function titleCaseCategory(key) {
+  const map = { gst: "GST", ip: "IP", fir: "FIR" };
+  if (map[key]) return map[key];
+  return key.replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function renderSolutions() {
+  const grid = document.getElementById("solutionsGrid");
+  if (!grid) return;
+  const cards = Object.entries(legalData).map(([key, data]) => {
+    const title = titleCaseCategory(key);
+    return `
+      <div class="solution-card">
+        <h3>${title}</h3>
+        <div class="solution-meta"><strong>Law/Section:</strong> ${data.section}</div>
+        <div class="solution-meta"><strong>Lawyer:</strong> ${data.lawyer}</div>
+        <button class="document-btn" onclick="startTopicChat('${key}')">Ask about ${title}</button>
+      </div>
+    `;
+  }).join("");
+  grid.innerHTML = cards;
+}
+
+window.startTopicChat = function startTopicChat(key) {
+  const title = titleCaseCategory(key);
+  const message = `I need help with ${title}`;
+  const chatWidget = document.getElementById("chatWidget");
+  const isOpen = chatWidget && chatWidget.style.display === "flex";
+  if (!isOpen) {
+    pendingAutoMessage = message;
+    openChatModal();
+  } else {
+    const input = document.getElementById("chatInput");
+    input.value = message;
+    sendMessage();
+  }
+}
+
+// Initialize Solutions on load
+renderSolutions();
 
 // ————— Helpers: classification & key-points ————— //
 function classifyCategory(lowerMessage) {
