@@ -97,7 +97,7 @@ document.getElementById("welcomeForm").addEventListener("submit", function(e) {
   document.getElementById("chatWidget").style.display = "flex";
   document.getElementById("chatToggle").style.display = "none";
 
-  const welcomeMessage = `Hello ${userName}! I'm LegalGuru AI, your personal legal assistant. I can help you with legal guidance, recommend specialized lawyers, and provide relevant documents. How can I assist you today?`;
+  const welcomeMessage = `Hello ${userName}! I'm Legal Law Chat Bot, your personal legal assistant. I can help you with legal guidance, recommend specialized lawyers, and provide relevant documents. How can I assist you today?`;
   addBotMessage(welcomeMessage);
 });
 
@@ -192,7 +192,7 @@ function processUserMessage(message) {
     matchFound = true;
 
     const legalChatbotMessage = `
-      <strong>As Legal Chatbot, I can help — please answer a few quick questions so I can give precise legal steps:</strong><br><br>
+  <strong>As Legal Law Chat Bot, I can help — please answer a few quick questions so I can give precise legal steps:</strong><br><br>
       <ul>
         <li>Did you stop after the collision or drove away?</li>
         <li>Anyone injured? If yes, are they being treated/ambulance called?</li>
@@ -318,7 +318,7 @@ function downloadChat() {
     return;
   }
 
-  let chatText = `LegalGuru AI - Chat Summary\n`;
+  let chatText = `Legal Law Chat Bot - Chat Summary\n`;
   chatText += `User: ${userName}\n`;
   chatText += `Date: ${new Date().toLocaleString()}\n`;
   chatText += `${"=".repeat(50)}\n\n`;
@@ -328,7 +328,7 @@ function downloadChat() {
       chatText += `${userName}: ${entry.message}\n\n`;
     } else {
       const cleanMessage = entry.message.replace(/<br>/g, "\n").replace(/<\/?strong>/g, "").replace(/<[^>]*>/g, "");
-      chatText += `LegalGuru AI: ${cleanMessage}\n`;
+  chatText += `Legal Law Chat Bot: ${cleanMessage}\n`;
       if (entry.documentLink) {
         chatText += `Document: ${entry.documentLink}\n`;
       }
