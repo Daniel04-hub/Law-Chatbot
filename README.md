@@ -31,6 +31,8 @@ cd Law-Chatbot\project
 ### Live site
 - GitHub Pages: https://daniel04-hub.github.io/Law-Chatbot/
 
+Visit the live site here: https://daniel04-hub.github.io/Law-Chatbot/
+
 > Note: If the Pages URL changes (custom domain or org settings), see the repo’s Settings → Pages for the current link.
 
 ## 2. Static Site Hosting
