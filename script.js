@@ -249,7 +249,7 @@ function addBotMessage(message, documentLink = null) {
   let content = `<div class="message-content">${message}`;
 
   if (documentLink) {
-    content += `<br><a href="/docs/${documentLink}" class="document-btn" download>📄 Download Document</a>`;
+    content += `<br><button class="document-btn" type="button" onclick="downloadLegalDocument('${documentLink}')">📄 Download Document</button>`;
   }
 
   content += `</div>`;
@@ -259,6 +259,72 @@ function addBotMessage(message, documentLink = null) {
   chatHistory.push({ role: "bot", message, documentLink });
 
   scrollToBottom();
+}
+
+window.downloadLegalDocument = async function downloadLegalDocument(documentName) {
+  if (!documentName) {
+    addBotMessage("No document is available for this topic yet.");
+    return;
+  }
+
+  const encodedName = encodeURIComponent(documentName);
+  const staticPath = `docs/${encodedName}`;
+
+  try {
+    const response = await fetch(staticPath, { method: "GET" });
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = documentName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      addBotMessage("Your document has been downloaded successfully.");
+      return;
+    }
+  } catch (error) {
+  }
+
+  const categoryKey = Object.keys(legalData).find(
+    key => legalData[key]?.document === documentName
+  );
+
+  if (!categoryKey) {
+    addBotMessage("Document file is not available right now. Please try again later.");
+    return;
+  }
+
+  const data = legalData[categoryKey];
+  const latestUserMessage = chatHistory.filter(entry => entry.role === "user").slice(-1)[0]?.message || "(Add your case summary here)";
+
+  const draftText = [
+    `${titleCaseCategory(categoryKey)} - Draft Reference Document`,
+    "========================================",
+    `User: ${userName || "(Your Name)"}`,
+    `Recommended Lawyer: ${data.lawyer}`,
+    `Applicable Law/Section: ${data.section}`,
+    "",
+    "Case Summary:",
+    latestUserMessage,
+    "",
+    "Recommended Next Steps:",
+    ...(data.solutions || []).map((step, index) => `${index + 1}. ${step}`),
+    "",
+    "Documents to Prepare:",
+    ...((data.documents || []).map((item, index) => `${index + 1}. ${item}`)),
+    "",
+    "Disclaimer: This is a general legal information draft and not a substitute for professional legal advice."
+  ].join("\n");
+
+  const filename = documentName.toLowerCase().endsWith(".txt")
+    ? documentName
+    : documentName.replace(/\.[^.]+$/, "") + ".txt";
+
+  triggerDownload(draftText, filename);
+  addBotMessage("Static file was unavailable, so I generated a downloadable draft for you.");
 }
 
 function showTypingIndicator() {
